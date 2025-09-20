@@ -25,26 +25,27 @@ Key Points:
 - MIG cannot be simulated in Verilator.
 - Peripheral-based design allows full simulation and debugging.
 2.  Clock Domain Mismatch
-- Rocket Core runs faster than MPE.
-- An asynchronous queue was introduced to bridge the speed gap.
+- In the original design, an asynchronous queue was introduced to bridge the speed gap because Rocket Core runs faster than MPE. 
 - However, this caused timing faults during bitstream generation, so it was deprecated.
-- Despite removal, no functional errors were observed in simulation results.
+ Despite removal, no functional errors were observed in simulation results.
 3.  AXI4 Protocol Limitations
-- AXI4 frontend/backend communication is not supported in Verilator under Chipyard.
+- Original AXI4 frontend/backend communication is not supported in Verilator under Chipyard.
 - To resolve this, the handshake logic and FSM states in both frontend and backend were modified to bypass AXI4 constraints.
 
 ### MIG-Based Integration
 This approach attempts to follow the original design by embedding MPE directly into the MIG path.The original MIG integration modified several files, but:
-- Test files are incomplete. 
-Some signals are unused, and bitwidths were manually adjusted.
-After experimentation, it appears that prot and qos signals for AW and AR channels are required for proper DRAM interaction.
-However, how to manipulate these signals within MPE remains unclear.
+1. Test files are incomplete. 
+- Some signals are unused, and bitwidths were manually adjusted.
+- After experimentation, it appears that prot and qos signals for AW and AR channels are required for proper DRAM interaction.
+- However, how to manipulate these signals within MPE remains unclear.
+2. No debugging method
 - There is no reliable method to inspect or debug these signals post-bitstream generation, making validation difficult.
-Relevant Files from Original MIG Integration:
 
 Test files: 
-chipyard/fpga/fpga-shells/src/main/scala/devices/xilinx/xilinxvcu118mig/test.scala
-chipyard/fpga/fpga-shells/src/main/scala/ip/xilinx/vcu118mig/test.scala
+1. `chipyard/fpga/fpga-shells/src/main/scala/
+devices/xilinx/xilinxvcu118mig/test.scala`
+2. `chipyard/fpga/fpga-shells/src/main/scala/
+ip/xilinx/vcu118mig/test.scala`
 
 
 ## New and Modified Files
@@ -92,6 +93,7 @@ When MPE is implemented as a peripheral module, simulation behaves as expected. 
 
 
 ## Reference Links
+* [1] Y. Omori and K. Kimura, "Open-Source Hardware Memory Protection Engine Integrated With NVMM Simulator," in IEEE Computer Architecture Letters, vol. 21, no. 2, pp. 77-80, 1 July-Dec. 2022, doi: 10.1109/LCA.2022.3197777.
 * MPE on Freedom: https://github.com/uyiromo/freedom/tree/vc707nvmm-mpe
 * MPE: https://github.com/uyiromo/OpenMPE/tree/master
 * Chipyard 1.8.1: https://chipyard.readthedocs.io/en/1.8.1/index.html
