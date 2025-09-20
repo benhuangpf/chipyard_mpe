@@ -14,7 +14,7 @@ sim_name := none
 #########################################################################################
 # include shared variables
 #########################################################################################
-SUB_PROJECT ?= vcu118
+SUB_PROJECT ?= gcd
 
 ifeq ($(SUB_PROJECT),vcu118)
 	SBT_PROJECT       ?= fpga_platforms
@@ -22,6 +22,34 @@ ifeq ($(SUB_PROJECT),vcu118)
 	VLOG_MODEL        ?= VCU118FPGATestHarness
 	MODEL_PACKAGE     ?= chipyard.fpga.vcu118
 	CONFIG            ?= RocketVCU118Config
+	CONFIG_PACKAGE    ?= chipyard.fpga.vcu118
+	GENERATOR_PACKAGE ?= chipyard
+	TB                ?= none # unused
+	TOP               ?= ChipTop
+	BOARD             ?= vcu118
+	FPGA_BRAND        ?= xilinx
+endif
+
+ifeq ($(SUB_PROJECT),mpe)
+	SBT_PROJECT       ?= fpga_platforms
+	MODEL             ?= VCU118FPGATestHarness
+	VLOG_MODEL        ?= VCU118FPGATestHarness
+	MODEL_PACKAGE     ?= chipyard.fpga.vcu118
+	CONFIG            ?= MPEVCU118Config
+	CONFIG_PACKAGE    ?= chipyard.fpga.vcu118
+	GENERATOR_PACKAGE ?= chipyard
+	TB                ?= none # unused
+	TOP               ?= ChipTop
+	BOARD             ?= vcu118
+	FPGA_BRAND        ?= xilinx
+endif
+
+ifeq ($(SUB_PROJECT),gcd)
+	SBT_PROJECT       ?= fpga_platforms
+	MODEL             ?= VCU118FPGATestHarness
+	VLOG_MODEL        ?= VCU118FPGATestHarness
+	MODEL_PACKAGE     ?= chipyard.fpga.vcu118
+	CONFIG            ?= GCDVCU118Config
 	CONFIG_PACKAGE    ?= chipyard.fpga.vcu118
 	GENERATOR_PACKAGE ?= chipyard
 	TB                ?= none # unused

@@ -63,6 +63,14 @@ class RocketVCU118Config extends Config(
   new chipyard.RocketConfig)
 // DOC include end: AbstractVCU118 and Rocket
 
+class MPEVCU118Config extends Config(
+  new WithVCU118Tweaks ++
+  new chipyard.MPERocketConfig)  
+
+class GCDVCU118Config extends Config(
+  new WithVCU118Tweaks ++
+  new chipyard.GCDAXI4BlackBoxRocketConfig) 
+
 class BoomVCU118Config extends Config(
   new WithFPGAFrequency(50) ++
   new WithVCU118Tweaks ++
