@@ -1,6 +1,6 @@
 // DOC include start: GCD portlist
 module GCDMMIOBlackBox
-  #(parameter WIDTH)
+  #(parameter WIDTH = 32)
    (
     input                  clock,
     input                  reset,
