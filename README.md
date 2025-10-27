@@ -18,7 +18,7 @@ To overcome these challenges, this project is transitioning to a new SoC platfor
 The original implementation of the Memory Protection Engine (MPE) was integrated directly into the Memory Interface Generator (MIG). MIG for VC707 and VCU118 are architecturally similar, with the key difference being the DRAM type—DDR3 for VC707 and DDR4 for VCU118.
 This project explores two integration strategies: Peripheral-Based and MIG-Based.
 
-### Peripheral-Based Integration
+### Peripheral-Based Integration (Success)
 To enable simulation and modularity, MPE was re-implemented as a peripheral, inspired by Chipyard’s peripheral examples.
 Key Points:
 1.  Verilator Compatibility
@@ -31,8 +31,11 @@ Key Points:
 3.  AXI4 Protocol Limitations
 - Original AXI4 frontend/backend communication is not supported in Verilator under Chipyard.
 - To resolve this, the handshake logic and FSM states in both frontend and backend were modified to bypass AXI4 constraints.
+4.  Boot Process
+- In head.S, RISCV program is loaded into address PAYLOAD_DEST.
+- In Makefile, testbench fpga.c uses function print(kprintf.c) and reg_write32(mmio.h). 
 
-### MIG-Based Integration
+### MIG-Based Integration (Failure)
 This approach attempts to follow the original design by embedding MPE directly into the MIG path.The original MIG integration modified several files, but:
 1. Test files are incomplete. 
 - Some signals are unused, and bitwidths were manually adjusted.
@@ -71,6 +74,10 @@ This section outlines the key additions and modifications made to support the in
 - **fe_sim.scala** (generators/mpe/)
 - **be_sim.scala** (generators/mpe/)
 
+### Testbench
+- **Makefile** (tests/)
+- **mpe.c** (tests/)
+
 
 ## How to work
 The flow is same as Chipyard
@@ -78,18 +85,18 @@ The flow is same as Chipyard
 - Simulation on Verilator: https://chipyard.readthedocs.io/en/1.8.1/Simulation/Software-RTL-Simulation.html#
 - Prototyping Flow on VCU118: https://chipyard.readthedocs.io/en/1.8.1/Prototyping/VCU118.html
 
+Prompt
+- Verilator: make run-binary-debug CONFIG=MPERocketConfig BINARY=/home/ben/chipyard/tests/fpga.riscv
+- Prototyping: make bitstream
+
 
 ## Next step
 When MPE is implemented as a peripheral module, simulation behaves as expected. However, hardware deployment introduces the following challenges:
-1. Protocol Migration
+
+Protocol Migration
 - The peripheral interface was migrated from AXI to APB.
 - The system uses SRAM instead of DRAM, due to limited memory capacity on the VCU118 board.
 - SRAM constraints restrict the size and complexity of test cases.
-2. Bitstream Boot Issue
-- The FPGA bitstream can boot successfully.
-- However, data cannot be written to the assigned address as specified in the instruction stream.
-- This discrepancy between simulation and hardware behavior suggests the need for a dedicated driver for MPE.
-- The driver should be implemented in the Linux kernel, potentially referencing the NVDLA integration model.
 
 
 ## Reference Links
